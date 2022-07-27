@@ -74,7 +74,7 @@ void loop() {
   if (client.connect("database.deta.sh", 443)) {
     Serial.println("Connected to server");
     client.print("PUT ");
-    client.print(URI);    
+    client.print(URI);
     client.println(" HTTP/1.1");
     client.println("Host: database.deta.sh");
     client.println("User-Agent: Arduino/1.0");
@@ -84,9 +84,12 @@ void loop() {
     client.println("Content-Type: application/json");
     client.print("x-api-key: ");
     client.println(apiKey);
-    client.println("Content-Length: 24");
+    client.print("Content-Length: ");
+    client.println(String(sample).length() + 22);
     client.println();
-    client.println(String("{\"items\": [{\"age\": 15}]}"));
+    client.print("{\"items\": [{\"age\": ");
+    client.print(String(sample));
+    client.println("}]}");
   } else {
     Serial.println("Could not connect to server");
     while (true);

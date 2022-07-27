@@ -1,6 +1,6 @@
 #include "detaBaseArduinoESP32.h"
 
-//int DetaBaseObject::initialize(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey){
+//int DetaBaseObject::initialize(WiFiSerialSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey){
 //    _detaID = detaID
 //    _apiKey = apiKey
 //    _detaBaseName = detaBaseName
@@ -41,4 +41,46 @@ char* DetaBaseObject::getDetaID() {
 
 char* DetaBaseObject::getBaseURI(){
   return _baseURI;
+}
+
+int DetaBaseObject::putObject(char* jsonObject){
+  //connect it to server
+  Serial.print(F("PUT "));
+  Serial.print(_baseURI);
+  Serial.println(F(" HTTP/1.1"));
+  Serial.println(F("Host: database.deta.sh"));
+  Serial.println(F("User-Agent: Arduino/1.0"));
+  Serial.println(F("Accept-Encoding: gzip, deflate"));
+  Serial.println(F("Accept: */*"));
+  Serial.println(F("Connection: keep-alive"));
+  Serial.println(F("Content-Type: application/json"));
+  Serial.print(F("x-api-key: "));
+  Serial.println(_apiKey);
+  Serial.print(F("Content-Length: "));
+  Serial.println(strlen(jsonObject));
+  Serial.println();
+  Serial.println(jsonObject);
+
+  /*
+    unsigned long timeout = millis();
+  while (client.available() == 0) {
+    if (millis() - timeout > 5000) {
+      Serial.println(">>> Client Timeout  !");
+      client.stop();
+      return;
+    }
+  }
+
+  // Read all the lines of the reply from server and print them to Serial
+  while (client.available()) {
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  client.stop();
+  Serial.println();
+  Serial.println("closed connection");
+  */
+
+  return -231;
+
 }

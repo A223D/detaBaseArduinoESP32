@@ -65,6 +65,7 @@ void setup() {
 
 void loop() {
   Serial.println(detaObj.getBaseURI());
+  Serial.println(detaObj.putObject("{1234}"));
   delay(1000);
 
 }

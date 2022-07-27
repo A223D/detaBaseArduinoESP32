@@ -17,7 +17,7 @@ class DetaBaseObject {
     //int initialize(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey);
     int initialize(char* detaID, char* detaBaseName, char* apiKey);
     ~DetaBaseObject();
-    int putObject(const char* jsonObject);
+    int putObject(char* jsonObject);
     char* getObject(const char* key);
     char* postItem(const char* jsonObject);
     char* updateItem(const char* jsonObject);
