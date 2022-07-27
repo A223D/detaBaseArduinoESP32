@@ -2,7 +2,7 @@
 #define DETABASE_LIBRARY_H
 
 #include <Arduino.h>
-#include <WiFiClientSecure.h>
+//#include <WiFiClientSecure.h>
 
 
 #define DETABASE_TIMEOUT -1
@@ -14,13 +14,16 @@
 
 class DetaBaseObject {
   public:
-    int initialize(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey);
+    //int initialize(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey);
+    int initialize(char* detaID, char* detaBaseName, char* apiKey);
     ~DetaBaseObject();
     int putObject(const char* jsonObject);
     char* getObject(const char* key);
     char* postItem(const char* jsonObject);
     char* updateItem(const char* jsonObject);
     char* query(const char* queryObject);
+    char* getDetaID();
+    char* getBaseURI();
 
 
   private:
@@ -28,6 +31,7 @@ class DetaBaseObject {
     char* _detaID;
     char* _detaBaseName;
     char* _baseURI;
+//    WiFiClientSecure _wifiObject;
 };
 
 

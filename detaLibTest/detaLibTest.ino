@@ -1,6 +1,10 @@
 #include "detaBaseArduinoESP32.h"
-#include <WiFiClientSecure.h>
-#define LED 2
+//#include <WiFiClientSecure.h>
+#define LED 13
+
+const char* apiKey = "MY_API_KEY";
+const char* detaID = "MYdetaID";
+const char* detaBaseName = "detaNAME";
 
 const char* root_ca = \
                       "-----BEGIN CERTIFICATE-----\n" \
@@ -38,22 +42,29 @@ const char* root_ca = \
                       "jjxDah2nGN59PRbxYvnKkKj9\n" \
                       "-----END CERTIFICATE-----\n";
 
-WiFiClientSecure client;
+//WiFiClientSecure client;
 DetaBaseObject detaObj;
 
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("0xCAFE", "0xC0FFEE");
-  Serial.println("Waiting to connect to WiFi");
+  detaObj.initialize(detaID, detaBaseName, apiKey);
+  //WiFi.begin("0xCAFE", "0xC0FFEE");
+  //Serial.println("Waiting to connect to WiFi");
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+//  while (WiFi.status() != WL_CONNECTED) {
+//    delay(500);
+//    Serial.print(".");
+//  }
+
+  
+
+
 
 }
 
 void loop() {
+  Serial.println(detaObj.getBaseURI());
+  delay(1000);
 
 }
