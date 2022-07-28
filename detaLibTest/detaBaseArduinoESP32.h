@@ -14,8 +14,8 @@
 
 class DetaBaseObject {
   public:
+    int initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca, bool debugOption);
     int initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca);
-//    int initialize(char* detaID, char* detaBaseName, char* apiKey);
     ~DetaBaseObject();
     int putObject(char* jsonObject);
     int getObject(char* key);
@@ -32,6 +32,7 @@ class DetaBaseObject {
     char* _detaBaseName;
     char* _baseURI;
     WiFiClientSecure _wifiObject;
+    bool _debugOn;
 };
 
 

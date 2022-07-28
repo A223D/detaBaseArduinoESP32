@@ -3,9 +3,9 @@
 #include <WiFi.h>
 #define LED 2
 
-char* apiKey = "My_KEY";
+char* apiKey = "MY_KEY";
 char* detaID = "MY_ID";
-char* detaBaseName = "MY_DB";
+char* detaBaseName = "MY_BASE";
 
 char* root_ca = \
                 "-----BEGIN CERTIFICATE-----\n" \
@@ -52,8 +52,7 @@ void setup() {
   Serial.println("Let's begin initialization");
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
-  //client.setCACert(root_ca);
-  detaObj.initialize(client, detaID, detaBaseName, apiKey, root_ca);
+  detaObj.initialize(client, detaID, detaBaseName, apiKey, root_ca, true);
   Serial.println("Reached before WiFi init");
   WiFi.begin("0xCAFE", "0xC0FFEE");
   Serial.println("Waiting to connect to WiFi");
@@ -70,7 +69,7 @@ void setup() {
 void loop() {
   Serial.println(detaObj.getBaseURI());
   //Serial.println(detaObj.putObject("{1234}"));
-  Serial.println(detaObj.getObject("KEY"));
-  delay(1000);
+  Serial.println(detaObj.putObject("{\"items\": [{\"age\": 4}]}"));
+  while (true);
 
 }
