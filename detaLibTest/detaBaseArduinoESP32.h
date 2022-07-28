@@ -19,9 +19,9 @@ class DetaBaseObject {
     ~DetaBaseObject();
     int putObject(char* jsonObject);
     int getObject(char* key);
-    char* postItem(const char* jsonObject);
-    char* updateItem(const char* jsonObject);
-    char* query(const char* queryObject);
+    int insertObject(char* jsonObject);
+    int updateObject(char* jsonObject);
+    int query(char* queryObject);
     char* getDetaID();
     char* getBaseURI();
 
