@@ -50,7 +50,7 @@ char* DetaBaseObject::getBaseURI() {
 
 int DetaBaseObject::putObject(char* jsonObject) {
 
-  if(_debugOn){
+  if (_debugOn) {
     Serial.println("This is putObject");
     Serial.print("json: \t");
     Serial.println(jsonObject);
@@ -106,7 +106,7 @@ int DetaBaseObject::putObject(char* jsonObject) {
 }
 
 int DetaBaseObject::getObject(char* key) {
-  if(_debugOn){
+  if (_debugOn) {
     Serial.println("This is getObject");
     Serial.print("key: \t");
     Serial.println(key);
@@ -121,13 +121,10 @@ int DetaBaseObject::getObject(char* key) {
     _wifiObject.print("/items/");
     _wifiObject.print(key);
     _wifiObject.println(" HTTP/1.1");
-    _wifiObject.println("Host: database.deta.sh");
-    _wifiObject.println("User-Agent: Arduino/1.0");
-    _wifiObject.println("Accept-Encoding: gzip, deflate");
-    _wifiObject.println("Accept: */*");
-    _wifiObject.println("Connection: keep-alive");
     _wifiObject.print("x-api-key: ");
     _wifiObject.println(_apiKey);
+    _wifiObject.println("Host: database.deta.sh");
+    _wifiObject.println();
   } else {
     Serial.println("Could not connect to server");
     while (true);
@@ -158,10 +155,11 @@ int DetaBaseObject::getObject(char* key) {
 
 }
 
-int DetaBaseObject::insertObject(char* jsonObject){
-  if(_debugOn){
+
+int DetaBaseObject::insertObject(char* jsonObject) {
+  if (_debugOn) {
     Serial.println("This is insertObject");
-    Serial.print("key: \t");
+    Serial.print("jsonObject: \t");
     Serial.println(jsonObject);
     Serial.print("Length: \t");
     Serial.println(strlen(jsonObject));
@@ -213,13 +211,13 @@ int DetaBaseObject::insertObject(char* jsonObject){
   return -35;
 }
 
-int DetaBaseObject::updateObject(char* jsonObject){
-   if(_debugOn){
+int DetaBaseObject::updateObject(char* jsonObject, char* key) {
+  if (_debugOn) {
     Serial.println("This is updateObject");
     Serial.print("key: \t");
-    Serial.println(jsonObject);
+    Serial.println(key);
     Serial.print("Length: \t");
-    Serial.println(strlen(jsonObject));
+    Serial.println(strlen(key));
   }
 
   if (_wifiObject.connect("database.deta.sh", 443)) {
@@ -227,7 +225,7 @@ int DetaBaseObject::updateObject(char* jsonObject){
     _wifiObject.print("PATCH ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
-    _wifiObject.print(jsonObject);
+    _wifiObject.print(key);
     _wifiObject.println(" HTTP/1.1");
     _wifiObject.println("Host: database.deta.sh");
     _wifiObject.println("User-Agent: Arduino/1.0");
@@ -269,8 +267,8 @@ int DetaBaseObject::updateObject(char* jsonObject){
   return -35;
 }
 
-int DetaBaseObject::query(char* queryObject){
-   if(_debugOn){
+int DetaBaseObject::query(char* queryObject) {
+  if (_debugOn) {
     Serial.println("This is query");
     Serial.print("key: \t");
     Serial.println(queryObject);

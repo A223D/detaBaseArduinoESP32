@@ -1,6 +1,5 @@
 #include "detaBaseArduinoESP32.h"
 #include <WiFiClientSecure.h>
-#include <WiFi.h>
 #define LED 2
 
 char* apiKey = "MY_KEY";
@@ -68,8 +67,12 @@ void setup() {
 
 void loop() {
   Serial.println(detaObj.getBaseURI());
-  //Serial.println(detaObj.putObject("{1234}"));
-  Serial.println(detaObj.putObject("{\"items\": [{\"age\": 4}]}"));
+  //Serial.println(detaObj.putObject("{\"items\": [{\"age\": 4}]}"));
+  Serial.println(detaObj.getObject("56gix2dcawza"));
+  //Serial.println(detaObj.insertObject("{\"item\":{\"key\":\"abc\",\"age\": 4}}"));
+  //Serial.println(detaObj.updateObject("{\"set\":{\"age\":5}}", "abc"));
+  Serial.println(detaObj.query("{\"query\": [{\"age?lt\":10}]}"));
+  
   while (true);
 
 }
