@@ -32,10 +32,6 @@ int DetaBaseObject::initialize(WiFiClientSecure wifiObject, char* detaID, char* 
 }
 
 DetaBaseObject::~DetaBaseObject() {
-  //probably won't need these. You only free what you malloc
-  //    free(_detaID);
-  //    free(_apiKey);
-  //    free(_detaBaseName);
   free(_baseURI);
 }
 
@@ -81,14 +77,7 @@ int DetaBaseObject::putObject(char* jsonObject) {
   }
 
 
-  unsigned long timeout = millis();
-  while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
-      _wifiObject.stop();
-      while (true); //figure out what to do here
-    }
-  }
+  checkTimeout();
 
   if (_debugOn) {
     // Read all the lines of the reply from server and print them to Serial
@@ -130,14 +119,7 @@ int DetaBaseObject::getObject(char* key) {
   }
 
 
-  unsigned long timeout = millis();
-  while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
-      _wifiObject.stop();
-      while (true); //figure out what to do here
-    }
-  }
+  checkTimeout();
 
   if (_debugOn) {
     // Read all the lines of the reply from server and print them to Serial
@@ -187,14 +169,7 @@ int DetaBaseObject::insertObject(char* jsonObject) {
   }
 
 
-  unsigned long timeout = millis();
-  while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
-      _wifiObject.stop();
-      while (true); //figure out what to do here
-    }
-  }
+  checkTimeout();
 
   if (_debugOn) {
     // Read all the lines of the reply from server and print them to Serial
@@ -243,14 +218,7 @@ int DetaBaseObject::updateObject(char* jsonObject, char* key) {
   }
 
 
-  unsigned long timeout = millis();
-  while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
-      _wifiObject.stop();
-      while (true); //figure out what to do here
-    }
-  }
+  checkTimeout();
 
   if (_debugOn) {
     // Read all the lines of the reply from server and print them to Serial
@@ -298,14 +266,7 @@ int DetaBaseObject::query(char* queryObject) {
   }
 
 
-  unsigned long timeout = millis();
-  while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
-      _wifiObject.stop();
-      while (true); //figure out what to do here
-    }
-  }
+  checkTimeout();
 
   if (_debugOn) {
     // Read all the lines of the reply from server and print them to Serial
@@ -331,5 +292,53 @@ void printResult(result resultObject) {
   Serial.print("Status:\t");
   Serial.println(resultObject.statusCode);
   Serial.print("Reply:\t");
-  Serial.println(resultObject.reply);
+  Serial.println(resultObject.reply);  //should be println
+}
+
+result DetaBaseObject::getObjectResult(char* key) {
+  Serial.println("This is get Object");
+  result returnObject;
+  if (_wifiObject.connect("database.deta.sh", 443)) {
+    Serial.println("Connected to server");
+    _wifiObject.print("GET ");
+    _wifiObject.print(_baseURI);
+    _wifiObject.print("/items/");
+    _wifiObject.print(key);
+    _wifiObject.println(" HTTP/1.1");
+    _wifiObject.print("x-api-key: ");
+    _wifiObject.println(_apiKey);
+    _wifiObject.println("Host: database.deta.sh");
+    _wifiObject.println();
+  } else {
+    Serial.println("Could not connect to server");
+    while (true);
+  }
+
+  checkTimeout();
+  parseReply(&returnObject);
+
+  _wifiObject.stop();
+  Serial.println();
+  Serial.println("closed connection");
+  return returnObject;
+}
+
+void DetaBaseObject::checkTimeout() {
+  unsigned long timeout = millis();
+  while (_wifiObject.available() == 0) {
+    if (millis() - timeout > 5000) {
+      Serial.println(">>> Client Timeout  !");
+      _wifiObject.stop();
+      while (true); //figure out what to do here
+    }
+  }
+}
+
+void DetaBaseObject::parseReply(result* returnObject) {
+  returnObject->statusCode = _wifiObject.readStringUntil('\r').substring(9, 12).toInt();
+  for (int i = 0; i < 8; i++) {
+    returnObject->reply = _wifiObject.readStringUntil('\r');
+  }
+  returnObject->reply = _wifiObject.readStringUntil('\r').substring(1);
+  returnObject->reply = returnObject->reply.substring(0, returnObject->reply.length() - 1);
 }

@@ -14,7 +14,7 @@
 
 typedef struct {
   int statusCode;
-  char* reply;
+  String reply;
 } result;
 
 void printResult(result resultObject);
@@ -32,6 +32,8 @@ class DetaBaseObject {
     char* getDetaID();
     char* getBaseURI();
     result testResult();
+    result getObjectResult(char* key);
+    
 
 
   private:
@@ -41,6 +43,8 @@ class DetaBaseObject {
     char* _baseURI;
     WiFiClientSecure _wifiObject;
     bool _debugOn;
+    void checkTimeout();
+    void parseReply(result* returnObject);
 };
 
 #endif

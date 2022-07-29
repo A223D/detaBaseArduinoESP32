@@ -73,8 +73,8 @@ void loop() {
   //Serial.println(detaObj.updateObject("{\"set\":{\"age\":5}}", "abc"));
   //Serial.println(detaObj.query("{\"query\": [{\"age?lt\":10}]}"));
 
-  printResult(detaObj.testResult());
-
+  //printResult(detaObj.testResult());
+  printResult(detaObj.getObjectResult("56gix2dcawza"));
   while (true);
 
 }
