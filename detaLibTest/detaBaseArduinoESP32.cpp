@@ -31,7 +31,6 @@ int DetaBaseObject::initialize(WiFiClientSecure wifiObject, char* detaID, char* 
   return 5;
 }
 
-
 DetaBaseObject::~DetaBaseObject() {
   //probably won't need these. You only free what you malloc
   //    free(_detaID);
@@ -154,7 +153,6 @@ int DetaBaseObject::getObject(char* key) {
 
 
 }
-
 
 int DetaBaseObject::insertObject(char* jsonObject) {
   if (_debugOn) {
@@ -320,4 +318,18 @@ int DetaBaseObject::query(char* queryObject) {
   Serial.println();
   Serial.println("closed connection");
   return -35;
+}
+
+result DetaBaseObject::testResult() {
+  result returnObject;
+  returnObject.statusCode = 1000;
+  returnObject.reply = "Let's see if this works";
+  return returnObject;
+}
+
+void printResult(result resultObject) {
+  Serial.print("Status:\t");
+  Serial.println(resultObject.statusCode);
+  Serial.print("Reply:\t");
+  Serial.println(resultObject.reply);
 }

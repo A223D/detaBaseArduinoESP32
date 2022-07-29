@@ -12,6 +12,13 @@
 #define DETABASE_UNAUTHORIZED -4
 #define DETABASE_WIFI_NOT_CONNECTED -5
 
+typedef struct {
+  int statusCode;
+  char* reply;
+} result;
+
+void printResult(result resultObject);
+
 class DetaBaseObject {
   public:
     int initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca, bool debugOption);
@@ -24,6 +31,7 @@ class DetaBaseObject {
     int query(char* queryObject);
     char* getDetaID();
     char* getBaseURI();
+    result testResult();
 
 
   private:
@@ -34,7 +42,5 @@ class DetaBaseObject {
     WiFiClientSecure _wifiObject;
     bool _debugOn;
 };
-
-
 
 #endif
