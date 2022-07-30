@@ -8,6 +8,7 @@ DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* 
   _baseURI = (char *)malloc((strlen("/v1/") + strlen(detaID) + strlen("/") + strlen(detaBaseName) + 1 ) * sizeof(char));
   _wifiObject = wifiObject;
   _wifiObject.setCACert(_detaRootCa);
+  _host = "database.deta.sh";
   strcpy(_baseURI, "/v1/");
   strncat(_baseURI, detaID, strlen(detaID));
   strncat(_baseURI, "/", strlen("/"));
@@ -22,6 +23,7 @@ DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* 
   _baseURI = (char *)malloc((strlen("/v1/") + strlen(detaID) + strlen("/") + strlen(detaBaseName) + 1 ) * sizeof(char));
   _wifiObject = wifiObject;
   _wifiObject.setCACert(_detaRootCa);
+  _host = "database.deta.sh";
   strcpy(_baseURI, "/v1/");
   strncat(_baseURI, detaID, strlen(detaID));
   strncat(_baseURI, "/", strlen("/"));
@@ -53,7 +55,7 @@ result DetaBaseObject::putObject(char* jsonObject) {
   result returnObject;
   initResult(&returnObject);
 
-  if (_wifiObject.connect(DETA_BASE_HOST, HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("PUT ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items");
@@ -62,7 +64,10 @@ result DetaBaseObject::putObject(char* jsonObject) {
     returnObject.reply = "Could not connect to server";
     return returnObject;
   }
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
   _wifiObject.stop();
   if (_debugOn) {
@@ -81,7 +86,7 @@ result DetaBaseObject::insertObject(char* jsonObject) {
   }
   result returnObject;
   initResult(&returnObject);
-  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("POST ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items");
@@ -90,7 +95,10 @@ result DetaBaseObject::insertObject(char* jsonObject) {
     returnObject.reply = "Could not connect to server";
     return returnObject;
   }
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
   _wifiObject.stop();
   if (_debugOn) {
@@ -114,7 +122,7 @@ result DetaBaseObject::updateObject(char* jsonObject, char* key) {
   result returnObject;
   initResult(&returnObject);
 
-  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("PATCH ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
@@ -124,7 +132,10 @@ result DetaBaseObject::updateObject(char* jsonObject, char* key) {
     returnObject.reply = "Could not connect to server";
     return returnObject;
   }
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
   _wifiObject.stop();
   if (_debugOn) {
@@ -143,7 +154,7 @@ result DetaBaseObject::query(char* queryObject) {
   }
   result returnObject;
   initResult(&returnObject);
-  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("POST ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/query");
@@ -152,7 +163,10 @@ result DetaBaseObject::query(char* queryObject) {
     returnObject.reply = "Could not connect to server";
     return returnObject;
   }
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
   _wifiObject.stop();
   if (_debugOn) {
@@ -178,7 +192,7 @@ result DetaBaseObject::getObject(char* key) {
   }
   result returnObject;
   initResult(&returnObject);
-  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("GET ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
@@ -190,7 +204,10 @@ result DetaBaseObject::getObject(char* key) {
     return returnObject;
   }
 
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
 
   _wifiObject.stop();
@@ -210,7 +227,7 @@ result DetaBaseObject::deleteObject(char* key) {
   }
   result returnObject;
   initResult(&returnObject);
-  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
+  if (_wifiObject.connect(_host, HTTPS_PORT)) {
     _wifiObject.print("DELETE ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
@@ -222,7 +239,10 @@ result DetaBaseObject::deleteObject(char* key) {
     return returnObject;
   }
 
-  checkTimeout();
+  if (checkTimeout()) {
+    returnObject.reply = "Client Timeout";
+    return returnObject;
+  }
   parseReply(&returnObject);
 
   _wifiObject.stop();
@@ -233,15 +253,16 @@ result DetaBaseObject::deleteObject(char* key) {
 
 }
 
-void DetaBaseObject::checkTimeout() {
+bool DetaBaseObject::checkTimeout() {
   unsigned long timeout = millis();
   while (_wifiObject.available() == 0) {
     if (millis() - timeout > 5000) {
       Serial.println(">>> Client Timeout  !");
       _wifiObject.stop();
-      while (true); //figure out what to do here
+      return true;
     }
   }
+  return false;
 }
 
 void DetaBaseObject::parseReply(result* returnObject) {

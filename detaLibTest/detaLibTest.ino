@@ -15,7 +15,6 @@ void setup() {
   Serial.println("Let's begin initialization");
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
-  //detaObj.initialize(client, detaID, detaBaseName, apiKey, root_ca, true);
   Serial.println("Reached before WiFi init");
   WiFi.begin("0xCAFE", "0xC0FFEE");
   Serial.println("Waiting to connect to WiFi");
