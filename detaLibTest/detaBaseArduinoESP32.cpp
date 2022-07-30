@@ -51,16 +51,16 @@ result DetaBaseObject::putObject(char* jsonObject) {
     Serial.println(strlen(jsonObject));
   }
   result returnObject;
-  initResult(returnObject);
+  initResult(&returnObject);
 
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  if (_wifiObject.connect(DETA_BASE_HOST, HTTPS_PORT)) {
     _wifiObject.print("PUT ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items");
     writePayloadHeaders(jsonObject);
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
   checkTimeout();
   parseReply(&returnObject);
@@ -80,15 +80,15 @@ result DetaBaseObject::insertObject(char* jsonObject) {
     Serial.println(strlen(jsonObject));
   }
   result returnObject;
-  initResult(returnObject);
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  initResult(&returnObject);
+  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
     _wifiObject.print("POST ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items");
     writePayloadHeaders(jsonObject);
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
   checkTimeout();
   parseReply(&returnObject);
@@ -112,17 +112,17 @@ result DetaBaseObject::updateObject(char* jsonObject, char* key) {
     Serial.println(strlen(jsonObject));
   }
   result returnObject;
-  initResult(returnObject);
+  initResult(&returnObject);
 
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
     _wifiObject.print("PATCH ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
     _wifiObject.print(key);
     writePayloadHeaders(jsonObject);
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
   checkTimeout();
   parseReply(&returnObject);
@@ -142,15 +142,15 @@ result DetaBaseObject::query(char* queryObject) {
     Serial.println(strlen(queryObject));
   }
   result returnObject;
-  initResult(returnObject);
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  initResult(&returnObject);
+  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
     _wifiObject.print("POST ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/query");
     writePayloadHeaders(queryObject);
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
   checkTimeout();
   parseReply(&returnObject);
@@ -177,8 +177,8 @@ result DetaBaseObject::getObject(char* key) {
     Serial.println(strlen(key));
   }
   result returnObject;
-  initResult(returnObject);
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  initResult(&returnObject);
+  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
     _wifiObject.print("GET ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
@@ -186,8 +186,8 @@ result DetaBaseObject::getObject(char* key) {
     writeNonPayloadHeaders();
     _wifiObject.println();
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
 
   checkTimeout();
@@ -209,8 +209,8 @@ result DetaBaseObject::deleteObject(char* key) {
     Serial.println(strlen(key));
   }
   result returnObject;
-  initResult(returnObject);
-  if (_wifiObject.connect("database.deta.sh", 443)) {
+  initResult(&returnObject);
+  if (_wifiObject.connect("database.deta.sh", HTTPS_PORT)) {
     _wifiObject.print("DELETE ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
@@ -218,8 +218,8 @@ result DetaBaseObject::deleteObject(char* key) {
     writeNonPayloadHeaders();
     _wifiObject.println();
   } else {
-    Serial.println("Could not connect to server");
-    while (true);
+    returnObject.reply = "Could not connect to server";
+    return returnObject;
   }
 
   checkTimeout();
@@ -273,7 +273,7 @@ void DetaBaseObject::writePayloadHeaders(char* object) {
   _wifiObject.println(object);
 }
 
-void DetaBaseObject::initResult(result resultObject) {
-  resultObject.statusCode = -1;
-  resultObject.reply = "If you see this, something went wrong";
+void DetaBaseObject::initResult(result* resultObject) {
+  resultObject->statusCode = -1;
+  resultObject->reply = "If you see this, something went wrong and error was not assigned here. Contact developer.";
 }

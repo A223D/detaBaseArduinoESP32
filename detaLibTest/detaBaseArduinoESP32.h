@@ -4,6 +4,9 @@
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
 
+#define HTTPS_PORT 80
+#define DETA_BASE_HOST "database.deta.sh"
+
 typedef struct {
   int statusCode;
   String reply;
@@ -37,7 +40,7 @@ class DetaBaseObject {
     void parseReply(result* returnObject);
     void writeNonPayloadHeaders();
     void writePayloadHeaders(char* object);
-    void initResult(result resultObject);
+    void initResult(result* resultObject);
     const char* const _detaRootCa = \
                                     "-----BEGIN CERTIFICATE-----\n" \
                                     "MIIF3jCCA8agAwIBAgIQAf1tMPyjylGoG7xkDjUDLTANBgkqhkiG9w0BAQwFADCB\n" \
