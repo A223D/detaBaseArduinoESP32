@@ -6,6 +6,7 @@
 
 #define HTTPS_PORT 443
 #define DETA_BASE_HOST "database.deta.sh"
+#define TIMEOUT_THRESH 5000
 
 typedef struct {
   int statusCode;

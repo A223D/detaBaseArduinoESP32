@@ -13,7 +13,6 @@ DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* 
   strncat(_baseURI, detaID, strlen(detaID));
   strncat(_baseURI, "/", strlen("/"));
   strncat(_baseURI, detaBaseName, strlen(detaBaseName));
-  Serial.println("But actually here");
 }
 
 DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey) {
@@ -28,7 +27,6 @@ DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* 
   strncat(_baseURI, detaID, strlen(detaID));
   strncat(_baseURI, "/", strlen("/"));
   strncat(_baseURI, detaBaseName, strlen(detaBaseName));
-  Serial.println("But actually here");
 }
 
 DetaBaseObject::~DetaBaseObject() {
@@ -256,8 +254,7 @@ result DetaBaseObject::deleteObject(char* key) {
 bool DetaBaseObject::checkTimeout() {
   unsigned long timeout = millis();
   while (_wifiObject.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout  !");
+    if (millis() - timeout > TIMEOUT_THRESH) {
       _wifiObject.stop();
       return true;
     }
