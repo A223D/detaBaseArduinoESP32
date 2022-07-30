@@ -1,0 +1,35 @@
+#######################################
+# Syntax Coloring Map For detaBaseArduinoESP32
+#######################################
+
+#######################################
+# Library (KEYWORD3)
+#######################################
+
+detaBaseArduinoESP32	KEYWORD3
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DetaBaseObject	KEYWORD1
+result	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+putObject	KEYWORD2
+getObject	KEYWORD2
+deleteObject	KEYWORD2
+insertObject	KEYWORD2
+updateObject	KEYWORD2
+getDetaID	KEYWORD2
+getBaseURI	KEYWORD2
+printResult	KEYWORD2
+query	KEYWORD2
+
+#######################################
+# Structures (KEYWORD3)
+#######################################
+result	KEYWORD3
