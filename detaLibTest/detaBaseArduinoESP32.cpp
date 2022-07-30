@@ -1,34 +1,32 @@
 #include "detaBaseArduinoESP32.h"
 
-int DetaBaseObject::initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca) {
-  _detaID = detaID;
-  _apiKey = apiKey;
-  _detaBaseName = detaBaseName;
-  _baseURI = (char *)malloc((strlen("/v1/") + strlen(detaID) + strlen("/") + strlen(detaBaseName) + 1 ) * sizeof(char));
-  _wifiObject = wifiObject;
-  _wifiObject.setCACert(ca);
-  strcpy(_baseURI, "/v1/");
-  strncat(_baseURI, detaID, strlen(detaID));
-  strncat(_baseURI, "/", strlen("/"));
-  strncat(_baseURI, detaBaseName, strlen(detaBaseName));
-  Serial.println("But actually here");
-  return 5;
-}
-
-int DetaBaseObject::initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca, bool debugOption) {
+DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, bool debugOption) {
   _debugOn = debugOption;
   _detaID = detaID;
   _apiKey = apiKey;
   _detaBaseName = detaBaseName;
   _baseURI = (char *)malloc((strlen("/v1/") + strlen(detaID) + strlen("/") + strlen(detaBaseName) + 1 ) * sizeof(char));
   _wifiObject = wifiObject;
-  _wifiObject.setCACert(ca);
+  _wifiObject.setCACert(_detaRootCa);
   strcpy(_baseURI, "/v1/");
   strncat(_baseURI, detaID, strlen(detaID));
   strncat(_baseURI, "/", strlen("/"));
   strncat(_baseURI, detaBaseName, strlen(detaBaseName));
   Serial.println("But actually here");
-  return 5;
+}
+
+DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey) {
+  _detaID = detaID;
+  _apiKey = apiKey;
+  _detaBaseName = detaBaseName;
+  _baseURI = (char *)malloc((strlen("/v1/") + strlen(detaID) + strlen("/") + strlen(detaBaseName) + 1 ) * sizeof(char));
+  _wifiObject = wifiObject;
+  _wifiObject.setCACert(_detaRootCa);
+  strcpy(_baseURI, "/v1/");
+  strncat(_baseURI, detaID, strlen(detaID));
+  strncat(_baseURI, "/", strlen("/"));
+  strncat(_baseURI, detaBaseName, strlen(detaBaseName));
+  Serial.println("But actually here");
 }
 
 DetaBaseObject::~DetaBaseObject() {
@@ -44,7 +42,7 @@ char* DetaBaseObject::getBaseURI() {
 }
 
 result DetaBaseObject::putObject(char* jsonObject) {
-  
+
   if (_debugOn) {
     Serial.println("This is putObject");
     Serial.print("json: \t");
