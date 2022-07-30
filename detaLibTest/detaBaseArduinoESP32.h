@@ -24,16 +24,16 @@ class DetaBaseObject {
     int initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca, bool debugOption);
     int initialize(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, char* ca);
     ~DetaBaseObject();
+    
     result putObject(char* jsonObject);
-    int insertObject(char* jsonObject);
-    int updateObject(char* jsonObject, char* key);
+    result getObject(char* key);
+    result deleteObject(char* key);
+    result insertObject(char* jsonObject);
+    result updateObject(char* jsonObject, char* key);
     result query(char* queryObject);
     char* getDetaID();
     char* getBaseURI();
-    result testResult();
-    result getObject(char* key);
-
-
+    
   private:
     char* _apiKey;
     char* _detaID;

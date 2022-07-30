@@ -55,7 +55,6 @@ void setup() {
   Serial.println("Reached before WiFi init");
   WiFi.begin("0xCAFE", "0xC0FFEE");
   Serial.println("Waiting to connect to WiFi");
-
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -65,16 +64,35 @@ void setup() {
 
 }
 
+// PUT "{\"items\":[{\"age\":4}]}"
+
+//INSERT "{\"item\":{\"key\":\"cba\",\"age\":4}}"
+
+//INSERT "{\"item\":{\"key\":\"abc\",\"age\":4}}"
+
+//UPDATE "{\"increment\":{\"age\":1}}", key:abc
+
+//UPDATE "{\"increment\":{\"age\":1}}", key:cba
+
+//QUERY "{\"query\":[{\"age?lt\": 10}]}"
+
 void loop() {
-  //Serial.println(detaObj.getBaseURI());
-  printResult(detaObj.putObject("{\"items\": [{\"age\": 4}]}"));
-  //Serial.println(detaObj.getObject("56gix2dcawza"));
-  //Serial.println(detaObj.insertObject("{\"item\":{\"key\":\"abc\",\"age\": 4}}"));
-  //Serial.println(detaObj.updateObject("{\"set\":{\"age\":5}}", "abc"));
-  printResult(detaObj.query("{\"query\": [{\"age?lt\":10}]}"));
+  printResult(detaObj.putObject("{\"items\":[{\"age\":4}]}"));
+  Serial.println();
+  printResult(detaObj.getObject("cba"));
+  Serial.println();
+  printResult(detaObj.deleteObject("abc"));
+  Serial.println();
+  printResult(detaObj.insertObject("{\"item\":{\"key\":\"cba\",\"age\":4}}"));
+  Serial.println();
+  printResult(detaObj.insertObject("{\"item\":{\"key\":\"abc\",\"age\":4}}"));
+  Serial.println();
+  printResult(detaObj.updateObject("{\"increment\":{\"age\":1}}", "abc"));
+  Serial.println();
+  printResult(detaObj.updateObject("{\"increment\":{\"age\":1}}", "bcs"));
+  Serial.println();
+  printResult(detaObj.query("{\"query\":[{\"age?lt\": 10}]}"));
+  Serial.println();
 
-  //printResult(detaObj.testResult());
-  printResult(detaObj.getObject("56gix2dcawza"));
   while (true);
-
 }
