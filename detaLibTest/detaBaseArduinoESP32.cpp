@@ -43,8 +43,9 @@ char* DetaBaseObject::getBaseURI() {
   return _baseURI;
 }
 
-int DetaBaseObject::putObject(char* jsonObject) {
-
+result DetaBaseObject::putObject(char* jsonObject) {
+  result returnObject;
+  initResult(returnObject);
   if (_debugOn) {
     Serial.println("This is putObject");
     Serial.print("json: \t");
@@ -58,82 +59,19 @@ int DetaBaseObject::putObject(char* jsonObject) {
     _wifiObject.print("PUT ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items");
-    _wifiObject.println(" HTTP/1.1");
-    _wifiObject.println("Host: database.deta.sh");
-    _wifiObject.println("User-Agent: Arduino/1.0");
-    _wifiObject.println("Accept-Encoding: gzip, deflate");
-    _wifiObject.println("Accept: */*");
-    _wifiObject.println("Connection: keep-alive");
-    _wifiObject.println("Content-Type: application/json");
-    _wifiObject.print("x-api-key: ");
-    _wifiObject.println(_apiKey);
-    _wifiObject.print("Content-Length: ");
-    _wifiObject.println(strlen(jsonObject));
-    _wifiObject.println();
-    _wifiObject.println(jsonObject);
+    writePayloadHeaders(jsonObject);
   } else {
     Serial.println("Could not connect to server");
     while (true);
   }
-
-
   checkTimeout();
-
-  if (_debugOn) {
-    // Read all the lines of the reply from server and print them to Serial
-    while (_wifiObject.available()) {
-      String line = _wifiObject.readStringUntil('\r');
-      Serial.print(line);
-    }
-  }
+  parseReply(&returnObject);
   _wifiObject.stop();
-  Serial.println();
-  Serial.println("closed connection");
-  return -35;
-
-}
-
-int DetaBaseObject::getObject(char* key) {
   if (_debugOn) {
-    Serial.println("This is getObject");
-    Serial.print("key: \t");
-    Serial.println(key);
-    Serial.print("Length: \t");
-    Serial.println(strlen(key));
+    Serial.println();
+    Serial.println("closed connection");
   }
-
-  if (_wifiObject.connect("database.deta.sh", 443)) {
-    Serial.println("Connected to server");
-    _wifiObject.print("GET ");
-    _wifiObject.print(_baseURI);
-    _wifiObject.print("/items/");
-    _wifiObject.print(key);
-    _wifiObject.println(" HTTP/1.1");
-    _wifiObject.print("x-api-key: ");
-    _wifiObject.println(_apiKey);
-    _wifiObject.println("Host: database.deta.sh");
-    _wifiObject.println();
-  } else {
-    Serial.println("Could not connect to server");
-    while (true);
-  }
-
-
-  checkTimeout();
-
-  if (_debugOn) {
-    // Read all the lines of the reply from server and print them to Serial
-    while (_wifiObject.available()) {
-      String line = _wifiObject.readStringUntil('\r');
-      Serial.print(line);
-    }
-  }
-  _wifiObject.stop();
-  Serial.println();
-  Serial.println("closed connection");
-  return -35;
-
-
+  return returnObject;
 }
 
 int DetaBaseObject::insertObject(char* jsonObject) {
@@ -193,6 +131,14 @@ int DetaBaseObject::updateObject(char* jsonObject, char* key) {
     Serial.println(strlen(key));
   }
 
+  //  _wifiObject.println("Host: database.deta.sh");
+  //  _wifiObject.println("User-Agent: Arduino/1.0");
+  //  _wifiObject.println("Accept-Encoding: gzip, deflate");
+  //  _wifiObject.println("Accept: */*");
+  //  _wifiObject.println("Connection: keep-alive");
+  //  _wifiObject.print("x-api-key: ");
+  //  _wifiObject.println(_apiKey);
+
   if (_wifiObject.connect("database.deta.sh", 443)) {
     Serial.println("Connected to server");
     _wifiObject.print("PATCH ");
@@ -200,14 +146,8 @@ int DetaBaseObject::updateObject(char* jsonObject, char* key) {
     _wifiObject.print("/items/");
     _wifiObject.print(key);
     _wifiObject.println(" HTTP/1.1");
-    _wifiObject.println("Host: database.deta.sh");
-    _wifiObject.println("User-Agent: Arduino/1.0");
-    _wifiObject.println("Accept-Encoding: gzip, deflate");
-    _wifiObject.println("Accept: */*");
-    _wifiObject.println("Connection: keep-alive");
+    writeNonPayloadHeaders();
     _wifiObject.println("Content-Type: application/json");
-    _wifiObject.print("x-api-key: ");
-    _wifiObject.println(_apiKey);
     _wifiObject.print("Content-Length: ");
     _wifiObject.println(strlen(jsonObject));
     _wifiObject.println();
@@ -233,7 +173,7 @@ int DetaBaseObject::updateObject(char* jsonObject, char* key) {
   return -35;
 }
 
-int DetaBaseObject::query(char* queryObject) {
+result DetaBaseObject::query(char* queryObject) {
   if (_debugOn) {
     Serial.println("This is query");
     Serial.print("key: \t");
@@ -241,44 +181,26 @@ int DetaBaseObject::query(char* queryObject) {
     Serial.print("Length: \t");
     Serial.println(strlen(queryObject));
   }
-
+  result returnObject;
+  initResult(returnObject);
   if (_wifiObject.connect("database.deta.sh", 443)) {
     Serial.println("Connected to server");
     _wifiObject.print("POST ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/query");
-    _wifiObject.println(" HTTP/1.1");
-    _wifiObject.println("Host: database.deta.sh");
-    _wifiObject.println("User-Agent: Arduino/1.0");
-    _wifiObject.println("Accept-Encoding: gzip, deflate");
-    _wifiObject.println("Accept: */*");
-    _wifiObject.println("Connection: keep-alive");
-    _wifiObject.println("Content-Type: application/json");
-    _wifiObject.print("x-api-key: ");
-    _wifiObject.println(_apiKey);
-    _wifiObject.print("Content-Length: ");
-    _wifiObject.println(strlen(queryObject));
-    _wifiObject.println();
-    _wifiObject.println(queryObject);
+    writePayloadHeaders(queryObject);
   } else {
     Serial.println("Could not connect to server");
     while (true);
   }
-
-
   checkTimeout();
-
-  if (_debugOn) {
-    // Read all the lines of the reply from server and print them to Serial
-    while (_wifiObject.available()) {
-      String line = _wifiObject.readStringUntil('\r');
-      Serial.print(line);
-    }
-  }
+  parseReply(&returnObject);
   _wifiObject.stop();
-  Serial.println();
-  Serial.println("closed connection");
-  return -35;
+  if (_debugOn) {
+    Serial.println();
+    Serial.println("closed connection");
+  }
+  return returnObject;
 }
 
 result DetaBaseObject::testResult() {
@@ -295,19 +217,23 @@ void printResult(result resultObject) {
   Serial.println(resultObject.reply);  //should be println
 }
 
-result DetaBaseObject::getObjectResult(char* key) {
-  Serial.println("This is get Object");
+result DetaBaseObject::getObject(char* key) {
+  if (_debugOn) {
+    Serial.println("This is getObject");
+    Serial.print("key: \t");
+    Serial.println(key);
+    Serial.print("Length: \t");
+    Serial.println(strlen(key));
+  }
   result returnObject;
+  initResult(returnObject);
   if (_wifiObject.connect("database.deta.sh", 443)) {
     Serial.println("Connected to server");
     _wifiObject.print("GET ");
     _wifiObject.print(_baseURI);
     _wifiObject.print("/items/");
     _wifiObject.print(key);
-    _wifiObject.println(" HTTP/1.1");
-    _wifiObject.print("x-api-key: ");
-    _wifiObject.println(_apiKey);
-    _wifiObject.println("Host: database.deta.sh");
+    writeNonPayloadHeaders();
     _wifiObject.println();
   } else {
     Serial.println("Could not connect to server");
@@ -318,8 +244,10 @@ result DetaBaseObject::getObjectResult(char* key) {
   parseReply(&returnObject);
 
   _wifiObject.stop();
-  Serial.println();
-  Serial.println("closed connection");
+  if (_debugOn) {
+    Serial.println();
+    Serial.println("closed connection");
+  }
   return returnObject;
 }
 
@@ -341,4 +269,29 @@ void DetaBaseObject::parseReply(result* returnObject) {
   }
   returnObject->reply = _wifiObject.readStringUntil('\r').substring(1);
   returnObject->reply = returnObject->reply.substring(0, returnObject->reply.length() - 1);
+}
+
+void DetaBaseObject::writeNonPayloadHeaders() {
+  _wifiObject.println(" HTTP/1.1");
+  _wifiObject.println("Host: database.deta.sh");
+  _wifiObject.println("User-Agent: Arduino/1.0");
+  _wifiObject.println("Accept-Encoding: gzip, deflate");
+  _wifiObject.println("Accept: */*");
+  _wifiObject.println("Connection: keep-alive");
+  _wifiObject.print("x-api-key: ");
+  _wifiObject.println(_apiKey);
+}
+
+void DetaBaseObject::writePayloadHeaders(char* object) {
+  writeNonPayloadHeaders();
+  _wifiObject.println("Content-Type: application/json");
+  _wifiObject.print("Content-Length: ");
+  _wifiObject.println(strlen(object));
+  _wifiObject.println();
+  _wifiObject.println(object);
+}
+
+void DetaBaseObject::initResult(result resultObject) {
+  resultObject.statusCode = -1;
+  resultObject.reply = "If you see this, something went wrong";
 }
