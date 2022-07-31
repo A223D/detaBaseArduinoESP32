@@ -12,7 +12,7 @@ This library is abstracts away the networking aspect of interacting with a [Deta
 > Please note that enterprise connections are not accepted. The best way to experiment is using a mobile hotspot created with a phone or laptop.
 
 ## Theory of Operation
-#### Result Struct
+### Result Struct
 A `result` struct is internally defined in the following manner:
 ```
 typedef struct {
@@ -21,14 +21,15 @@ typedef struct {
 } result;
 ```
 All functions that interact with Deta return a `result` structure containing the status code of the response received from the server, as well as the reply. The reply is not the complete response text, bu just the payload of the complete response in JSON. This payload along with the status describes either the success or failure of a request(or function) along with the reason. The [Deta Base HTTP API docs](https://docs.deta.sh/docs/base/http) describe all the types of requests and their possible responses. In addition to the docs, here is a list of all [HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses) and their meanings.
-#### Methods exposed in the library in a `DetaBaseObject` Object:
+### Methods exposed in the library in a `DetaBaseObject` Object:
 The strings being passed to each function all correspond to the payload required by each HTTP request given in the [docs](https://docs.deta.sh/docs/base/http). Consequently, they must be in the same format mentioned. They can however be one-line objects instead of the multi-line format. **Make sure each `"` has a preceding `\` to make it an escape character.
-##### Constructors:
+#### Constructors:
 * `DetaBaseObject(WiFiClientSecure  wifiObject, char*  detaID, char*  detaBaseName, char*  apiKey);`
-  * Creates `DetaBaseObject` on which functions below can be called. Takes a `WiFiClientSecure` object, which does not need anything done to it. You can just declare a `WiFiClientSecure`object and then pass it here. Requires a Deta project ID, Deta Base name, and Deta Project Key/API Key.
+  * Creates `DetaBaseObject` on which functions below can be called. Takes a `WiFiClientSecure` object, which does not need anything done to it. You can just declare a `WiFiClientSecure`object and then pass it here. Requires a Deta project ID, Deta Base name, and Deta Project Key/API Key. It also allocated memory for a base URI (described in the [docs](https://docs.deta.sh/docs/base/http/)), creates, and assigns it to an internal variable.
 * `DetaBaseObject(WiFiClientSecure  wifiObject, char*  detaID, char*  detaBaseName, char*  apiKey, bool  debugOption);`
   * Same as previous, but enables debugging statements if `true` is passed for the `debugOption` parameter.
-##### Functions:
+#### Functions:
+Each function exposed corresponds to a request listed in the [docs](https://docs.deta.sh/docs/base/http).
 * `result putObject(char* jsonObject);`
   * `jsonObject` must be in the same format as described in the [Base HTTP docs](https://docs.deta.sh/docs/base/http), i.e. `{"items":[{"key":{key},"field1":"value1"}]}` with key being optional. In a C++ string though, a `\` character must be added before each `"`, but the resulting `\"` is counted as 1 character. Hence the `jsonObject` becomes `{\"items\":[{\"key\":{key},\"field1\":\"value1\"}]}`. The key, if provided, **must also be a string**. Otherwise it is automatically assigned by Deta and is returned with the full object in the `reply` in the returned `result` object. You can also put another JSON object in the value of an item.
 * `result getObject(char* key);`
@@ -44,10 +45,46 @@ The strings being passed to each function all correspond to the payload required
 * `char* getDetaID();`
   * Simply returns Deta ID provided.
 * `char* getBaseURI();`
-Each function exposed corresponds to a request listed in the [docs](https://docs.deta.sh/docs/base/http). `getBaseURI()` returns a character array in the following format: `/v1/{project_id}/{base_name}`.
+  * `getBaseURI()` returns a character array in the following format: `/v1/{project_id}/{base_name}`
+#### Destructor:
+* `~DetaBaseObject();`
+	* The destructor just frees the the memory allocated to hold the Base URI.
+
 
 #### Methods exposed separately in the library:
+* `void printResult(result resultObject);`
+	* This method just prints the status code and JSON payload received in the response to a request(or function call) with a `\n` character in the end. The `\n` character is added by this function for convenience and is not present in the `reply` of the returned `result` struct.
 
 ## Usage Instructions
+Examples are provided for reference and can be accessed though the Arduino menu or through the `examples` directory in this repository.
 
+### 1. WiFiClientSecure
+```
+WiFiClientSecure client;
+DetaBaseObject detaObj(client, detaID, detaBaseName, apiKey, true);
+```
+A `WiFiClientSecure` object is needed to initialize a `DetaBaseObject` object, and must be passed to it. There is no needed modification to the `WiFiClientSecure` object. 
+
+### 2. WiFi Connection
+A WiFi connection must be established using the inbuilt `WiFi` library like so:
+```arduino
+WiFiClientSecure client;
+DetaBaseObject  detaObj(client, detaID, detaBaseName, apiKey, true);
+
+void setup() {
+	Serial.begin(115200);
+	WiFi.begin("SSID", "PASSWORD");
+	Serial.println("Waiting to connect to WiFi");
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(500);
+		Serial.print(".");
+	}
+	Serial.println();
+	digitalWrite(LED, HIGH);
+}
+
+void loop(){
+	//do something here with detaObj
+}
+```
 
