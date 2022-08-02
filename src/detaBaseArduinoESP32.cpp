@@ -1,6 +1,6 @@
 #include "detaBaseArduinoESP32.h"
 
-DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, bool debugOption) {
+DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey, bool debugOption) {
   _debugOn = debugOption;
   _detaID = detaID;
   _apiKey = apiKey;
@@ -15,7 +15,7 @@ DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* 
   strncat(_baseURI, detaBaseName, strlen(detaBaseName));
 }
 
-DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey) {
+DetaBaseObject::DetaBaseObject(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey) {
   _detaID = detaID;
   _apiKey = apiKey;
   _detaBaseName = detaBaseName;
@@ -33,11 +33,11 @@ DetaBaseObject::~DetaBaseObject() {
   free(_baseURI);
 }
 
-char* DetaBaseObject::getDetaID() {
+const char* DetaBaseObject::getDetaID() {
   return _detaID;
 }
 
-char* DetaBaseObject::getBaseURI() {
+const char* DetaBaseObject::getBaseURI() {
   return _baseURI;
 }
 

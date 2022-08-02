@@ -17,8 +17,8 @@ typedef struct {
 void printResult(result resultObject);
 class DetaBaseObject {
   public:
-    DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey, bool debugOption);
-    DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey);
+    DetaBaseObject(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey, bool debugOption);
+    DetaBaseObject(WiFiClientSecure wifiObject, const char* detaID, const char* detaBaseName, const char* apiKey);
     ~DetaBaseObject();
 
     result putObject(const char* jsonObject);
@@ -27,15 +27,15 @@ class DetaBaseObject {
     result insertObject(const char* jsonObject);
     result updateObject(const char* jsonObject, const char* key);
     result query(const char* queryObject);
-    char* getDetaID();
-    char* getBaseURI();
+    const char* getDetaID();
+    const char* getBaseURI();
 
   private:
-    char* _apiKey;
-    char* _detaID;
-    char* _detaBaseName;
+    const char* _apiKey;
+    const char* _detaID;
+    const char* _detaBaseName;
     char* _baseURI;
-    char* _host;
+    const char* _host;
     WiFiClientSecure _wifiObject;
     bool _debugOn;
     bool checkTimeout();
