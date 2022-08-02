@@ -41,7 +41,7 @@ char* DetaBaseObject::getBaseURI() {
   return _baseURI;
 }
 
-result DetaBaseObject::putObject(char* jsonObject) {
+result DetaBaseObject::putObject(const char* jsonObject) {
 
   if (_debugOn) {
     Serial.println("This is putObject");
@@ -74,7 +74,7 @@ result DetaBaseObject::putObject(char* jsonObject) {
   return returnObject;
 }
 
-result DetaBaseObject::insertObject(char* jsonObject) {
+result DetaBaseObject::insertObject(const char* jsonObject) {
   if (_debugOn) {
     Serial.println("This is insertObject");
     Serial.print("jsonObject: \t");
@@ -105,7 +105,7 @@ result DetaBaseObject::insertObject(char* jsonObject) {
   return returnObject;
 }
 
-result DetaBaseObject::updateObject(char* jsonObject, char* key) {
+result DetaBaseObject::updateObject(const char* jsonObject, const char* key) {
   if (_debugOn) {
     Serial.println("This is updateObject");
     Serial.print("key: \t");
@@ -142,7 +142,7 @@ result DetaBaseObject::updateObject(char* jsonObject, char* key) {
   return returnObject;
 }
 
-result DetaBaseObject::query(char* queryObject) {
+result DetaBaseObject::query(const char* queryObject) {
   if (_debugOn) {
     Serial.println("This is query");
     Serial.print("key: \t");
@@ -180,7 +180,7 @@ void printResult(result resultObject) {
   Serial.println(resultObject.reply);  //should be println
 }
 
-result DetaBaseObject::getObject(char* key) {
+result DetaBaseObject::getObject(const char* key) {
   if (_debugOn) {
     Serial.println("This is getObject");
     Serial.print("key: \t");
@@ -215,7 +215,7 @@ result DetaBaseObject::getObject(char* key) {
   return returnObject;
 }
 
-result DetaBaseObject::deleteObject(char* key) {
+result DetaBaseObject::deleteObject(const char* key) {
   if (_debugOn) {
     Serial.println("This is delete Object");
     Serial.print("key: \t");
@@ -282,7 +282,7 @@ void DetaBaseObject::writeNonPayloadHeaders() {
   _wifiObject.println(_apiKey);
 }
 
-void DetaBaseObject::writePayloadHeaders(char* object) {
+void DetaBaseObject::writePayloadHeaders(const char* object) {
   writeNonPayloadHeaders();
   _wifiObject.println("Content-Type: application/json");
   _wifiObject.print("Content-Length: ");

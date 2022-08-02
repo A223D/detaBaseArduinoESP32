@@ -21,12 +21,12 @@ class DetaBaseObject {
     DetaBaseObject(WiFiClientSecure wifiObject, char* detaID, char* detaBaseName, char* apiKey);
     ~DetaBaseObject();
 
-    result putObject(char* jsonObject);
-    result getObject(char* key);
-    result deleteObject(char* key);
-    result insertObject(char* jsonObject);
-    result updateObject(char* jsonObject, char* key);
-    result query(char* queryObject);
+    result putObject(const char* jsonObject);
+    result getObject(const char* key);
+    result deleteObject(const char* key);
+    result insertObject(const char* jsonObject);
+    result updateObject(const char* jsonObject, const char* key);
+    result query(const char* queryObject);
     char* getDetaID();
     char* getBaseURI();
 
@@ -41,7 +41,7 @@ class DetaBaseObject {
     bool checkTimeout();
     void parseReply(result* returnObject);
     void writeNonPayloadHeaders();
-    void writePayloadHeaders(char* object);
+    void writePayloadHeaders(const char* object);
     void initResult(result* resultObject);
     const char* const _detaRootCa = \
                                     "-----BEGIN CERTIFICATE-----\n" \
