@@ -12,14 +12,14 @@ StaticJsonDocument<50> outer;
 
 String jsonString;
 
-int val = -1;
+int val = 1;
 
 void setup() {
   Serial.begin(115200);
-  StaticJsonDocument<10> internal;
+  StaticJsonDocument<20> internal;
   Serial.println("Let's begin initialization");
   JsonArray items = outer.createNestedArray("items");
-  internal["value"] = val;
+  internal["age"] = val;
   items.add(internal);
   serializeJson(outer, jsonString);
   Serial.println(jsonString);
@@ -36,13 +36,24 @@ void setup() {
 }
 
 void loop() {
-  outer["items"][0]["value"] = val;
+  StaticJsonDocument<120> receiving;
+  outer["items"][0]["age"] = val * 2;
   serializeJson(outer, jsonString);
   Serial.println(jsonString);
 
-  printResult(detaObj.putObject(jsonString.c_str()));
+  result myResult = detaObj.putObject(jsonString.c_str());
   Serial.println();
+  Serial.println(myResult.statusCode);
+  Serial.println(myResult.reply);
+  deserializeJson(receiving, myResult.reply);
+  const char* assignedKey = receiving["processed"]["items"][0]["key"];
+  val = receiving["processed"]["items"][0]["age"];
+
+  Serial.print("Key assigned by Deta:\t");
+  Serial.println(assignedKey);
+  Serial.print("Value received:\t");
+  Serial.println(val);
+
   jsonString = "";
-  val++;
-  delay(1000);
+  delay(10000);
 }
