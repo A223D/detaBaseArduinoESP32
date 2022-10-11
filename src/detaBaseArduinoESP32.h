@@ -43,6 +43,7 @@ class DetaBaseObject {
     void writeNonPayloadHeaders();
     void writePayloadHeaders(const char* object);
     void initResult(result* resultObject);
+    const char fingerprint[] PROGMEM = "4B C7 8E E0 6B F4 8D 57 B4 2D 59 49 C1 8B CA EE 1D 2A F0 F4";
     const char* const _detaRootCa = \
                                     "-----BEGIN CERTIFICATE-----\n" \
                                     "MIIF3jCCA8agAwIBAgIQAf1tMPyjylGoG7xkDjUDLTANBgkqhkiG9w0BAQwFADCB\n" \
